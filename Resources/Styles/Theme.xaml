@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:items="clr-namespace:StockFroid.PageModels.Items">
+
+    <!-- ===== Palette (5 couleurs de base + 3 couleurs d'état) ===== -->
+    <Color x:Key="Primaire">#166534</Color>
+    <Color x:Key="PrimaireClair">#DCFCE7</Color>
+    <Color x:Key="Fond">#F3F6F5</Color>
+    <Color x:Key="Surface">#FFFFFF</Color>
+    <Color x:Key="FondChamp">#F1F5F9</Color>
+    <Color x:Key="Bordure">#E2E8F0</Color>
+    <Color x:Key="Texte">#0F172A</Color>
+    <Color x:Key="TexteMuted">#64748B</Color>
+    <Color x:Key="Ok">#15803D</Color>
+    <Color x:Key="OkFond">#DCFCE7</Color>
+    <Color x:Key="Attention">#B45309</Color>
+    <Color x:Key="AttentionFond">#FEF3C7</Color>
+    <Color x:Key="Danger">#B91C1C</Color>
+    <Color x:Key="DangerFond">#FEE2E2</Color>
+
+    <!-- ===== Texte ===== -->
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="Titre" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style x:Key="TitreSection" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style x:Key="Valeur" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style x:Key="Muted" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TexteMuted}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="Libelle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TexteMuted}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style x:Key="Erreur" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Danger}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="Lien" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource Primaire}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <!-- ===== Conteneurs ===== -->
+    <Style x:Key="Carte" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Stroke" Value="{StaticResource Bordure}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16,16,16,16" />
+    </Style>
+
+    <Style x:Key="CarteStat" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource FondChamp}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12,12,12,12" />
+    </Style>
+
+    <Style x:Key="Champ" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource FondChamp}" />
+        <Setter Property="Stroke" Value="{StaticResource Bordure}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12,12,12,12" />
+    </Style>
+
+    <Style x:Key="Pastille" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource FondChamp}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12,12,12,12" />
+    </Style>
+
+    <!-- ===== Champs de saisie ===== -->
+    <Style x:Key="EntryChamp" TargetType="Entry">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource TexteMuted}" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <Style x:Key="PickerChamp" TargetType="Picker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="TitleColor" Value="{StaticResource TexteMuted}" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <Style x:Key="DateChamp" TargetType="DatePicker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <!-- ===== Boutons (hauteur >= 48 pour un usage tactile, même avec des gants) ===== -->
+    <Style x:Key="BoutonPrincipal" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primaire}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="52" />
+    </Style>
+
+    <Style x:Key="BoutonSecondaire" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="BorderColor" Value="{StaticResource Bordure}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="52" />
+    </Style>
+
+    <Style x:Key="BoutonDanger" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource DangerFond}" />
+        <Setter Property="TextColor" Value="{StaticResource Danger}" />
+        <Setter Property="BorderColor" Value="{StaticResource Danger}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="52" />
+    </Style>
+
+    <Style x:Key="BoutonTexte" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Primaire}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="MinimumWidthRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="BoutonPas" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource FondChamp}" />
+        <Setter Property="TextColor" Value="{StaticResource Texte}" />
+        <Setter Property="BorderColor" Value="{StaticResource Bordure}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="WidthRequest" Value="52" />
+        <Setter Property="HeightRequest" Value="52" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <Style x:Key="BoutonPuce" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource PrimaireClair}" />
+        <Setter Property="TextColor" Value="{StaticResource Primaire}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="HeightRequest" Value="48" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <!-- ===== Pastille de filtre réutilisée par plusieurs écrans ===== -->
+    <DataTemplate x:Key="FiltreTemplate" x:DataType="items:FiltreItem">
+        <Border Padding="16,0"
+                MinimumHeightRequest="44"
+                StrokeThickness="1"
+                Stroke="{StaticResource Bordure}"
+                BackgroundColor="{StaticResource Surface}"
+                StrokeShape="RoundRectangle 22,22,22,22">
+            <Border.Triggers>
+                <DataTrigger TargetType="Border" Binding="{Binding EstActif}" Value="True">
+                    <Setter Property="BackgroundColor" Value="{StaticResource Texte}" />
+                </DataTrigger>
+            </Border.Triggers>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ChoisirCommand}" />
+            </Border.GestureRecognizers>
+            <Label Text="{Binding Libelle}"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   TextColor="{StaticResource TexteMuted}">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding EstActif}" Value="True">
+                        <Setter Property="TextColor" Value="White" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

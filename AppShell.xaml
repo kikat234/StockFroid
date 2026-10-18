@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell x:Class="StockFroid.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:StockFroid.Pages"
+       Shell.FlyoutBehavior="Disabled"
+       Shell.BackgroundColor="{StaticResource Surface}"
+       Shell.TitleColor="{StaticResource Texte}"
+       Shell.ForegroundColor="{StaticResource Primaire}"
+       Shell.TabBarBackgroundColor="{StaticResource Surface}"
+       Shell.TabBarForegroundColor="{StaticResource Primaire}"
+       Shell.TabBarTitleColor="{StaticResource Primaire}"
+       Shell.TabBarUnselectedColor="{StaticResource TexteMuted}">
+
+    <!-- Écran de démarrage : connexion -->
+    <ShellContent Route="login"
+                  ContentTemplate="{DataTemplate pages:LoginPage}" />
+
+    <!-- Navigation principale (barre du bas) -->
+    <TabBar Route="main">
+        <ShellContent Title="Campagnes" Icon="tab_campagnes.png" Route="campagnes"
+                      ContentTemplate="{DataTemplate pages:CampagnesPage}" />
+        <ShellContent Title="Nouveau lot" Icon="tab_nouveaulot.png" Route="nouveaulot"
+                      ContentTemplate="{DataTemplate pages:NouveauLotPage}" />
+        <ShellContent Title="Pertes" Icon="tab_pertes.png" Route="bilan"
+                      ContentTemplate="{DataTemplate pages:BilanPage}" />
+        <ShellContent Title="Profil" Icon="tab_profil.png" Route="profil"
+                      ContentTemplate="{DataTemplate pages:ProfilPage}" />
+    </TabBar>
+
+</Shell>

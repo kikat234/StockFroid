@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             x:Class="StockFroid.Pages.RegisterPage"
+             x:DataType="vm:RegisterPageModel"
+             Title="Créer un compte"
+             BackgroundColor="{StaticResource Fond}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="Création de profil agent" Style="{StaticResource Titre}" />
+
+            <Label Text="Nom et prénom de l'agent" Style="{StaticResource Libelle}" />
+            <Border Style="{StaticResource Champ}">
+                <Entry Text="{Binding NomComplet}" Placeholder="Ex. KONE Ibrahim"
+                       Style="{StaticResource EntryChamp}" />
+            </Border>
+
+            <Label Text="Matricule ou e-mail professionnel" Style="{StaticResource Libelle}" />
+            <Border Style="{StaticResource Champ}">
+                <Entry Text="{Binding Matricule}" Placeholder="Ex. SF-774092"
+                       Style="{StaticResource EntryChamp}" />
+            </Border>
+
+            <Label Text="Affectation (entrepôt / lieu de stockage)" Style="{StaticResource Libelle}" />
+            <Border Style="{StaticResource Champ}">
+                <Picker ItemsSource="{Binding ListeAffectations}"
+                        SelectedItem="{Binding AffectationChoisie}"
+                        Title="Choisir une affectation"
+                        Style="{StaticResource PickerChamp}" />
+            </Border>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Consigne de température assignée" Style="{StaticResource Muted}"
+                       VerticalOptions="Center" />
+                <Border Grid.Column="1" Style="{StaticResource Pastille}">
+                    <Label Text="{Binding TemperatureTexte}" FontAttributes="Bold" FontSize="13" />
+                </Border>
+            </Grid>
+
+            <Label Text="Mot de passe (8 caractères minimum)" Style="{StaticResource Libelle}" />
+            <Border Style="{StaticResource Champ}">
+                <Entry Text="{Binding MotDePasse}" IsPassword="True"
+                       Style="{StaticResource EntryChamp}" />
+            </Border>
+
+            <Label Text="Confirmation du mot de passe" Style="{StaticResource Libelle}" />
+            <Border Style="{StaticResource Champ}">
+                <Entry Text="{Binding Confirmation}" IsPassword="True"
+                       Placeholder="Ressaisir le mot de passe"
+                       Style="{StaticResource EntryChamp}" />
+            </Border>
+
+            <Border Style="{StaticResource Carte}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <CheckBox IsChecked="{Binding AttestationAcceptee}"
+                              Color="{StaticResource Primaire}"
+                              VerticalOptions="Start" />
+                    <Label Grid.Column="1"
+                           Text="J'atteste avoir pris connaissance du protocole de chaîne du froid et des seuils d'alerte sanitaires."
+                           VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border IsVisible="{Binding ADesErreurs}"
+                    BackgroundColor="{StaticResource DangerFond}"
+                    StrokeThickness="0" Padding="14"
+                    StrokeShape="RoundRectangle 12,12,12,12">
+                <VerticalStackLayout Spacing="4"
+                                     BindableLayout.ItemsSource="{Binding Erreurs}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Label Text="{Binding ., StringFormat='• {0}'}" Style="{StaticResource Erreur}" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Créer mon compte agent"
+                    Command="{Binding CreerCompteCommand}"
+                    Style="{StaticResource BoutonPrincipal}" />
+
+            <Button Text="Déjà enregistré ? Me connecter"
+                    Command="{Binding RetourConnexionCommand}"
+                    Style="{StaticResource BoutonTexte}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

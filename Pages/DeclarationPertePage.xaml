@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             xmlns:items="clr-namespace:StockFroid.PageModels.Items"
+             x:Class="StockFroid.Pages.DeclarationPertePage"
+             x:DataType="vm:DeclarationPertePageModel"
+             Title="Déclarer une perte"
+             BackgroundColor="{StaticResource Fond}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <!-- Rappel du lot -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="FICHE DE TRAÇABILITÉ" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Label Text="{Binding Code}" Style="{StaticResource TitreSection}" />
+                        <Label Text="{Binding Produit}" Style="{StaticResource Muted}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Border Style="{StaticResource CarteStat}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="EMPLACEMENT" Style="{StaticResource Libelle}" FontSize="12" />
+                                    <Label Text="{Binding LieuTexte}" FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource CarteStat}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="STOCK DISPONIBLE" Style="{StaticResource Libelle}" FontSize="12" />
+                                    <Label Text="{Binding StockTexte}" TextColor="{StaticResource Primaire}"
+                                           FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Déclaration de perte" Style="{StaticResource Titre}" />
+                    <Label Text="Procédure sanitaire et dépréciation post-récolte" Style="{StaticResource Muted}" />
+                </VerticalStackLayout>
+
+                <!-- Date du constat -->
+                <Label Text="Date du constat" Style="{StaticResource Libelle}" />
+                <Border Style="{StaticResource Champ}">
+                    <DatePicker Date="{Binding DateConstat}"
+                                MinimumDate="{Binding DateMin}"
+                                MaximumDate="{Binding DateMax}"
+                                Format="dd/MM/yyyy"
+                                Style="{StaticResource DateChamp}" />
+                </Border>
+
+                <!-- Quantité -->
+                <Label Text="Quantité perdue constatée (kg)" Style="{StaticResource Libelle}" />
+                <Border Style="{StaticResource Champ}">
+                    <Entry Text="{Binding QuantiteTexte}" Keyboard="Numeric" Placeholder="Ex. 25"
+                           Style="{StaticResource EntryChamp}" />
+                </Border>
+                <Border Style="{StaticResource CarteStat}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Nouveau stock restant estimé" Style="{StaticResource Muted}"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding StockEstimeTexte}"
+                               TextColor="{Binding StockEstimeCouleur}" FontAttributes="Bold" FontSize="16" />
+                    </Grid>
+                </Border>
+
+                <!-- Cause : choix unique -->
+                <Label Text="Cause de la dégradation" Style="{StaticResource TitreSection}" />
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Causes}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="items:CauseItem">
+                            <Border Style="{StaticResource Carte}" Padding="14">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding EstSelectionnee}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primaire}" />
+                                        <Setter Property="BackgroundColor" Value="{StaticResource PrimaireClair}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ChoisirCommand}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                    <Border WidthRequest="24" HeightRequest="24"
+                                            Stroke="{StaticResource TexteMuted}" StrokeThickness="2"
+                                            BackgroundColor="Transparent" VerticalOptions="Start"
+                                            StrokeShape="RoundRectangle 12,12,12,12">
+                                        <BoxView Color="{StaticResource Primaire}"
+                                                 WidthRequest="12" HeightRequest="12" CornerRadius="6"
+                                                 HorizontalOptions="Center" VerticalOptions="Center"
+                                                 IsVisible="{Binding EstSelectionnee}" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="{Binding Libelle}" FontAttributes="Bold" FontSize="16" />
+                                        <Label Text="{Binding Description}" Style="{StaticResource Muted}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Commentaire (facultatif)" Style="{StaticResource Libelle}" />
+                <Border Style="{StaticResource Champ}">
+                    <Editor Text="{Binding Commentaire}" HeightRequest="80"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource Texte}"
+                            Placeholder="Précisions utiles (lieu, circonstances…)"
+                            PlaceholderColor="{StaticResource TexteMuted}" />
+                </Border>
+
+                <Label Text="{Binding Erreur}" IsVisible="{Binding AErreur}" Style="{StaticResource Erreur}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}"
+                Stroke="{StaticResource Bordure}" StrokeThickness="1" Padding="16,10"
+                StrokeShape="RoundRectangle 0,0,0,0">
+            <VerticalStackLayout Spacing="8">
+                <Button Text="✓  Valider et déduire du stock"
+                        Command="{Binding ValiderCommand}"
+                        IsEnabled="{Binding PeutValider}"
+                        Style="{StaticResource BoutonPrincipal}" />
+                <Button Text="Annuler"
+                        Command="{Binding AnnulerCommand}"
+                        Style="{StaticResource BoutonSecondaire}" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             x:Class="StockFroid.Pages.NouveauLotPage"
+             x:DataType="vm:NouveauLotPageModel"
+             Title="Nouveau lot"
+             BackgroundColor="{StaticResource Fond}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <!-- Campagne active -->
+                <Border Style="{StaticResource Carte}">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="CAMPAGNE ACTIVE" Style="{StaticResource Libelle}" FontSize="12" />
+                            <Label Text="{Binding CampagneNom}" FontAttributes="Bold" FontSize="16" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="Changer"
+                                Command="{Binding ChangerCampagneCommand}"
+                                Style="{StaticResource BoutonTexte}" />
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Enregistrement d'un nouveau lot" Style="{StaticResource Titre}" />
+                    <Label Text="Traçabilité et seuils de péremption" Style="{StaticResource Muted}" />
+                </VerticalStackLayout>
+
+                <!-- Produit -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="PRODUIT AGRICOLE STOCKÉ" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Border Style="{StaticResource Champ}">
+                            <Picker ItemsSource="{Binding Produits}"
+                                    SelectedItem="{Binding Produit}"
+                                    Title="Choisir un produit"
+                                    Style="{StaticResource PickerChamp}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Date de récolte -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="DATE DE RÉCOLTE" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Border Style="{StaticResource Champ}">
+                            <DatePicker Date="{Binding DateRecolte}"
+                                        MaximumDate="{Binding DateMax}"
+                                        Format="dd/MM/yyyy"
+                                        Style="{StaticResource DateChamp}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Durée de conservation -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="DURÉE ESTIMÉE DE CONSERVATION (JOURS)" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Button Text="−" Command="{Binding DiminuerDureeCommand}"
+                                    Style="{StaticResource BoutonPas}" />
+                            <Border Grid.Column="1" Style="{StaticResource Champ}">
+                                <Entry Text="{Binding DureeTexte}" Keyboard="Numeric"
+                                       HorizontalTextAlignment="Center"
+                                       Style="{StaticResource EntryChamp}" />
+                            </Border>
+                            <Button Grid.Column="2" Text="+" Command="{Binding AugmenterDureeCommand}"
+                                    Style="{StaticResource BoutonPas}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                            <Button Text="7 j" Command="{Binding DefinirDureeCommand}" CommandParameter="7"
+                                    Style="{StaticResource BoutonPuce}" />
+                            <Button Grid.Column="1" Text="14 j" Command="{Binding DefinirDureeCommand}" CommandParameter="14"
+                                    Style="{StaticResource BoutonPuce}" />
+                            <Button Grid.Column="2" Text="21 j" Command="{Binding DefinirDureeCommand}" CommandParameter="21"
+                                    Style="{StaticResource BoutonPuce}" />
+                            <Button Grid.Column="3" Text="30 j" Command="{Binding DefinirDureeCommand}" CommandParameter="30"
+                                    Style="{StaticResource BoutonPuce}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Calcul automatique de la péremption (fonction clé) -->
+                <Border BackgroundColor="{StaticResource PrimaireClair}"
+                        Stroke="{StaticResource Primaire}" StrokeThickness="1" Padding="16"
+                        StrokeShape="RoundRectangle 16,16,16,16">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="CALCUL AUTOMATIQUE" TextColor="{StaticResource Primaire}"
+                               FontSize="12" FontAttributes="Bold" />
+                        <Label Text="Date de péremption prévisionnelle :" Style="{StaticResource Muted}" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding DatePeremptionTexte}" TextColor="{StaticResource Primaire}"
+                                   FontSize="24" FontAttributes="Bold" />
+                            <Label Text="{Binding DansTexte}" Style="{StaticResource Muted}" VerticalOptions="End" />
+                        </HorizontalStackLayout>
+                        <Label Text="Formule : date de récolte + durée de conservation"
+                               Style="{StaticResource Muted}" FontSize="12" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Quantité et unité -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="QUANTITÉ INITIALE ET UNITÉ" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Grid ColumnDefinitions="2*,*" ColumnSpacing="10">
+                            <Border Style="{StaticResource Champ}">
+                                <Entry Text="{Binding QuantiteTexte}" Keyboard="Numeric" Placeholder="Ex. 350"
+                                       Style="{StaticResource EntryChamp}" />
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource Champ}">
+                                <Picker ItemsSource="{Binding Unites}" SelectedItem="{Binding Unite}"
+                                        Style="{StaticResource PickerChamp}" />
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Lieu -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="LIEU DE STOCKAGE" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Border Style="{StaticResource Champ}">
+                            <Picker ItemsSource="{Binding Lieux}" SelectedItem="{Binding Lieu}"
+                                    Title="Choisir un lieu"
+                                    Style="{StaticResource PickerChamp}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding Erreur}" IsVisible="{Binding AErreur}" Style="{StaticResource Erreur}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}"
+                Stroke="{StaticResource Bordure}" StrokeThickness="1" Padding="16,10"
+                StrokeShape="RoundRectangle 0,0,0,0">
+            <Button Text="Enregistrer le lot"
+                    Command="{Binding EnregistrerCommand}"
+                    IsEnabled="{Binding PeutEnregistrer}"
+                    Style="{StaticResource BoutonPrincipal}" />
+        </Border>
+    </Grid>
+</ContentPage>

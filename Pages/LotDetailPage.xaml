@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             xmlns:items="clr-namespace:StockFroid.PageModels.Items"
+             x:Class="StockFroid.Pages.LotDetailPage"
+             x:DataType="vm:LotDetailPageModel"
+             Title="Détail du lot"
+             BackgroundColor="{StaticResource Fond}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <ActivityIndicator IsRunning="{Binding EstOccupe}" IsVisible="{Binding EstOccupe}"
+                                   Color="{StaticResource Primaire}" />
+
+                <Border IsVisible="{Binding AErreur}"
+                        BackgroundColor="{StaticResource DangerFond}"
+                        StrokeThickness="0" Padding="14"
+                        StrokeShape="RoundRectangle 12,12,12,12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding Erreur}" Style="{StaticResource Erreur}" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="Réessayer"
+                                Command="{Binding ReessayerCommand}"
+                                Style="{StaticResource BoutonTexte}" />
+                    </Grid>
+                </Border>
+
+                <!-- Bandeau d'état de péremption : couleur + icône + texte -->
+                <Border BackgroundColor="{Binding BandeauFond}"
+                        StrokeThickness="0" Padding="16"
+                        StrokeShape="RoundRectangle 16,16,16,16">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding BandeauTitre}" TextColor="{Binding BandeauCouleur}"
+                               FontSize="17" FontAttributes="Bold" />
+                        <Label Text="{Binding BandeauMessage}" TextColor="{Binding BandeauCouleur}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Fiche du lot -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding Code}" Style="{StaticResource Muted}" />
+                            <Label Text="{Binding Produit}" Style="{StaticResource Titre}" />
+                            <Label Text="{Binding CampagneNom}" Style="{StaticResource Muted}" />
+                        </VerticalStackLayout>
+
+                        <Border Style="{StaticResource CarteStat}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Lieu de stockage" Style="{StaticResource Muted}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding LieuTexte}" TextColor="{StaticResource Primaire}"
+                                       FontAttributes="Bold" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource CarteStat}">
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Label Text="Stock net disponible" VerticalOptions="Center" />
+                                    <HorizontalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End">
+                                        <Label Text="{Binding StockNetTexte}" TextColor="{StaticResource Primaire}"
+                                               FontSize="22" FontAttributes="Bold" />
+                                        <Label Text="{Binding StockInitialTexte}" Style="{StaticResource Muted}"
+                                               VerticalOptions="End" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <BoxView HeightRequest="1" Color="{StaticResource Bordure}" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Pertes enregistrées" TextColor="{StaticResource Danger}" />
+                                    <Label Grid.Column="1" Text="{Binding PertesTexte}"
+                                           TextColor="{StaticResource Danger}" FontAttributes="Bold" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource CarteStat}">
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Date de récolte" Style="{StaticResource Muted}" />
+                                    <Label Grid.Column="1" Text="{Binding RecolteTexte}" FontAttributes="Bold" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Durée de conservation" Style="{StaticResource Muted}" />
+                                    <Label Grid.Column="1" Text="{Binding DureeTexte}" FontAttributes="Bold" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Date de péremption (calculée)" Style="{StaticResource Muted}" />
+                                    <Label Grid.Column="1" Text="{Binding PeremptionTexte}"
+                                           TextColor="{Binding PeremptionCouleur}" FontAttributes="Bold" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Historique des pertes -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding HistoriqueTitre}" Style="{StaticResource TitreSection}" />
+
+                        <Label Text="Aucune perte enregistrée pour ce lot."
+                               IsVisible="{Binding AucunePerte}"
+                               Style="{StaticResource Muted}" />
+
+                        <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Pertes}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="items:PerteItem">
+                                    <Border Style="{StaticResource CarteStat}">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding DateHeure}" Style="{StaticResource Muted}"
+                                                       FontSize="13" />
+                                                <Label Text="{Binding Cause}" FontAttributes="Bold" />
+                                                <Label Text="{Binding Commentaire}" IsVisible="{Binding ACommentaire}"
+                                                       Style="{StaticResource Muted}" FontSize="13" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" Text="{Binding Quantite}"
+                                                   TextColor="{StaticResource Danger}" FontSize="18"
+                                                   FontAttributes="Bold" VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}"
+                Stroke="{StaticResource Bordure}" StrokeThickness="1" Padding="16,10"
+                StrokeShape="RoundRectangle 0,0,0,0">
+            <Button Text="⚠  Déclarer une perte sur ce lot"
+                    Command="{Binding DeclarerPerteCommand}"
+                    IsEnabled="{Binding PeutDeclarer}"
+                    Style="{StaticResource BoutonDanger}" />
+        </Border>
+    </Grid>
+</ContentPage>

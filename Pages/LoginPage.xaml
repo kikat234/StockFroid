@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             x:Class="StockFroid.Pages.LoginPage"
+             x:DataType="vm:LoginPageModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Fond}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,56,24,24" Spacing="20">
+
+            <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                <Border BackgroundColor="{StaticResource Texte}"
+                        WidthRequest="72" HeightRequest="72"
+                        StrokeThickness="0"
+                        HorizontalOptions="Center"
+                        StrokeShape="RoundRectangle 20,20,20,20">
+                    <Label Text="SF" TextColor="White" FontSize="26" FontAttributes="Bold"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <Label Text="StockFroid" Style="{StaticResource Titre}" HorizontalOptions="Center" />
+                <Label Text="Conservation &amp; Traçabilité Post-Récolte"
+                       Style="{StaticResource Muted}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource Carte}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="Identifiant / Matricule agent" Style="{StaticResource Libelle}" />
+                    <Border Style="{StaticResource Champ}">
+                        <Entry Text="{Binding Identifiant}"
+                               Placeholder="ex. AGT-2026-88"
+                               Style="{StaticResource EntryChamp}" />
+                    </Border>
+
+                    <Label Text="Mot de passe" Style="{StaticResource Libelle}" />
+                    <Border Style="{StaticResource Champ}">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Entry Text="{Binding MotDePasse}"
+                                   IsPassword="{Binding MotDePasseMasque}"
+                                   Placeholder="Votre mot de passe"
+                                   Style="{StaticResource EntryChamp}" />
+                            <Button Grid.Column="1"
+                                    Text="{Binding TexteBoutonAffichage}"
+                                    Command="{Binding BasculerMotDePasseCommand}"
+                                    Style="{StaticResource BoutonTexte}" />
+                        </Grid>
+                    </Border>
+
+                    <Label Text="{Binding Erreur}" IsVisible="{Binding AErreur}"
+                           Style="{StaticResource Erreur}" />
+
+                    <Button Text="Se connecter"
+                            Command="{Binding SeConnecterCommand}"
+                            Style="{StaticResource BoutonPrincipal}" />
+
+                    <Button Text="Mot de passe oublié / Récupération code agent"
+                            Command="{Binding MotDePasseOublieCommand}"
+                            Style="{StaticResource BoutonTexte}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="S'inscrire"
+                    Command="{Binding OuvrirInscriptionCommand}"
+                    Style="{StaticResource BoutonSecondaire}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

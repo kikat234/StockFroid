@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             xmlns:items="clr-namespace:StockFroid.PageModels.Items"
+             x:Class="StockFroid.Pages.BilanPage"
+             x:DataType="vm:BilanPageModel"
+             Title="Pertes et bilan"
+             BackgroundColor="{StaticResource Fond}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <ActivityIndicator IsRunning="{Binding EstOccupe}" IsVisible="{Binding EstOccupe}"
+                               Color="{StaticResource Primaire}" />
+
+            <Border IsVisible="{Binding AErreur}"
+                    BackgroundColor="{StaticResource DangerFond}"
+                    StrokeThickness="0" Padding="14"
+                    StrokeShape="RoundRectangle 12,12,12,12">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding Erreur}" Style="{StaticResource Erreur}" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="Réessayer"
+                            Command="{Binding ReessayerCommand}"
+                            Style="{StaticResource BoutonTexte}" />
+                </Grid>
+            </Border>
+
+            <!-- Campagne sélectionnée -->
+            <Border Style="{StaticResource Carte}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="CAMPAGNE SÉLECTIONNÉE" Style="{StaticResource Libelle}" FontSize="12" />
+                        <Label Text="{Binding CampagneNom}" FontAttributes="Bold" FontSize="16" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="Changer"
+                            Command="{Binding ChangerCampagneCommand}"
+                            Style="{StaticResource BoutonTexte}" />
+                </Grid>
+            </Border>
+
+            <Label Text="Aucune campagne. Créez-en une depuis l'onglet Campagnes."
+                   Style="{StaticResource Muted}" HorizontalTextAlignment="Center">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding ACampagne}" Value="True">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+
+            <VerticalStackLayout Spacing="12" IsVisible="{Binding ACampagne}">
+
+                <!-- Stocks -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Border Style="{StaticResource Carte}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="STOCK TOTAL BRUT" Style="{StaticResource Libelle}" FontSize="12" />
+                            <Label Text="{Binding StockBrutTexte}" Style="{StaticResource Valeur}" />
+                            <Label Text="100 % des entrées" Style="{StaticResource Muted}" FontSize="13" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Carte}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="SOLDE CONFORME" TextColor="{StaticResource Primaire}"
+                                   FontSize="12" FontAttributes="Bold" />
+                            <Label Text="{Binding SoldeTexte}" Style="{StaticResource Valeur}" />
+                            <Label Text="{Binding SoldePartTexte}" TextColor="{StaticResource Ok}" FontSize="13" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Taux de perte global -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="INDICATEUR DE PERTE" Style="{StaticResource Libelle}" FontSize="12" />
+                                <Label Text="Taux de perte global" Style="{StaticResource TitreSection}" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1" Style="{StaticResource Pastille}">
+                                <Label Text="{Binding TauxTexte}" FontAttributes="Bold" FontSize="16" />
+                            </Border>
+                        </Grid>
+                        <ProgressBar Progress="{Binding TauxProgression}" ProgressColor="{Binding TauxCouleur}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding RebutTexte}" Style="{StaticResource Muted}" />
+                            <Label Grid.Column="1" Text="{Binding TauxStatut}" TextColor="{Binding TauxCouleur}"
+                                   FontAttributes="Bold" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Répartition par cause -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Répartition par cause" Style="{StaticResource TitreSection}" />
+                        <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Repartition}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="items:RepartitionItem">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                                            <Label Text="{Binding Libelle}" />
+                                            <Label Grid.Column="1" Text="{Binding QuantiteTexte}" FontAttributes="Bold" />
+                                            <Label Grid.Column="2" Text="{Binding PartTexte}" TextColor="{Binding Couleur}"
+                                                   FontAttributes="Bold" />
+                                        </Grid>
+                                        <ProgressBar Progress="{Binding Progression}" ProgressColor="{Binding Couleur}" />
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Lots les plus touchés -->
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding ADesLotsCritiques}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Lots à forte criticité" Style="{StaticResource TitreSection}" />
+                        <Label Grid.Column="1" Text="Top 3 des pertes" Style="{StaticResource Muted}"
+                               VerticalOptions="Center" />
+                    </Grid>
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding LotsCritiques}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="items:LotCritiqueItem">
+                                <Border Style="{StaticResource Carte}" Padding="14">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <VerticalStackLayout Spacing="2">
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="{Binding Code}" TextColor="{StaticResource Primaire}"
+                                                       FontAttributes="Bold" />
+                                                <Border Style="{StaticResource Pastille}"
+                                                        BackgroundColor="{StaticResource DangerFond}">
+                                                    <Label Text="{Binding PerduTexte}" TextColor="{StaticResource Danger}"
+                                                           FontSize="12" FontAttributes="Bold" />
+                                                </Border>
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Detail}" Style="{StaticResource Muted}" FontSize="13" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="0" HorizontalOptions="End">
+                                            <Label Text="{Binding PartTexte}" TextColor="{StaticResource Danger}"
+                                                   FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="End" />
+                                            <Label Text="du volume du lot" Style="{StaticResource Muted}" FontSize="12"
+                                                   HorizontalTextAlignment="End" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <Button Text="Générer rapport local (PDF/CSV)"
+                        Command="{Binding GenererRapportCommand}"
+                        Style="{StaticResource BoutonPrincipal}" />
+
+                <Label Text="{Binding NoteTexte}" Style="{StaticResource Muted}" FontSize="13"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

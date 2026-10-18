@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StockFroid.PageModels"
+             xmlns:items="clr-namespace:StockFroid.PageModels.Items"
+             x:Class="StockFroid.Pages.CampagneDetailPage"
+             x:DataType="vm:CampagneDetailPageModel"
+             Title="Campagne"
+             BackgroundColor="{StaticResource Fond}">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="16,16,16,96" Spacing="14">
+
+                <!-- En-tête de campagne -->
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="8">
+                            <Border Style="{StaticResource Pastille}"
+                                    BackgroundColor="{StaticResource PrimaireClair}">
+                                <Label Text="{Binding StatutTexte}" TextColor="{StaticResource Primaire}"
+                                       FontSize="13" FontAttributes="Bold" />
+                            </Border>
+                            <Label Text="{Binding DepuisTexte}" Style="{StaticResource Muted}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Label Text="{Binding Titre}" Style="{StaticResource Titre}" />
+
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                            <Border Style="{StaticResource CarteStat}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="STOCKS ACTIFS" Style="{StaticResource Libelle}" FontSize="12" />
+                                    <Label Text="{Binding StockActifTexte}" FontAttributes="Bold" FontSize="16" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource CarteStat}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="LOTS GÉRÉS" Style="{StaticResource Libelle}" FontSize="12" />
+                                    <Label Text="{Binding LotsGeresTexte}" FontAttributes="Bold" FontSize="16" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2" Style="{StaticResource CarteStat}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding ADesAlertes}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource DangerFond}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="ALERTES" Style="{StaticResource Libelle}" FontSize="12" />
+                                    <Label Text="{Binding AlertesTexte}" FontAttributes="Bold" FontSize="16" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <Button Text="Consulter le bilan des pertes  ›"
+                                Command="{Binding ConsulterBilanCommand}"
+                                Style="{StaticResource BoutonSecondaire}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Contrôle de péremption -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="CONTRÔLE DE PÉREMPTION" Style="{StaticResource Libelle}" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding AffichesTexte}" Style="{StaticResource Muted}"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout Spacing="8"
+                                           BindableLayout.ItemsSource="{Binding Filtres}"
+                                           BindableLayout.ItemTemplate="{StaticResource FiltreTemplate}" />
+                </ScrollView>
+
+                <ActivityIndicator IsRunning="{Binding EstOccupe}" IsVisible="{Binding EstOccupe}"
+                                   Color="{StaticResource Primaire}" />
+
+                <Border IsVisible="{Binding AErreur}"
+                        BackgroundColor="{StaticResource DangerFond}"
+                        StrokeThickness="0" Padding="14"
+                        StrokeShape="RoundRectangle 12,12,12,12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding Erreur}" Style="{StaticResource Erreur}" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="Réessayer"
+                                Command="{Binding ReessayerCommand}"
+                                Style="{StaticResource BoutonTexte}" />
+                    </Grid>
+                </Border>
+
+                <Label Text="Aucun lot à afficher pour ce filtre."
+                       IsVisible="{Binding EstVide}"
+                       Style="{StaticResource Muted}"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Cartes de lot (triées par urgence) -->
+                <VerticalStackLayout Spacing="12"
+                                     BindableLayout.ItemsSource="{Binding Lots}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="items:LotItem">
+                            <Border Style="{StaticResource Carte}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CampagneDetailPageModel}}, Path=OuvrirLotCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="10">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <Label Text="{Binding Produit}" Style="{StaticResource TitreSection}"
+                                               VerticalOptions="Center" />
+                                        <Border Grid.Column="1" Style="{StaticResource Pastille}"
+                                                BackgroundColor="{Binding BadgeFond}">
+                                            <Label Text="{Binding BadgeTexte}" TextColor="{Binding BadgeCouleur}"
+                                                   FontSize="13" FontAttributes="Bold" />
+                                        </Border>
+                                    </Grid>
+
+                                    <Label Text="{Binding Detail}" Style="{StaticResource Muted}" />
+
+                                    <Border Style="{StaticResource CarteStat}">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="Récolte" Style="{StaticResource Muted}" FontSize="13" />
+                                                <Label Text="{Binding RecolteTexte}" FontAttributes="Bold" />
+                                            </VerticalStackLayout>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="End">
+                                                <Label Text="{Binding EcheanceLibelle}" Style="{StaticResource Muted}"
+                                                       FontSize="13" HorizontalTextAlignment="End" />
+                                                <Label Text="{Binding EcheanceValeur}" TextColor="{Binding BadgeCouleur}"
+                                                       FontAttributes="Bold" HorizontalTextAlignment="End" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bouton flottant -->
+        <Button Text="+  Nouveau lot"
+                Command="{Binding NouveauLotCommand}"
+                Style="{StaticResource BoutonPrincipal}"
+                HorizontalOptions="End" VerticalOptions="End"
+                Margin="16" Padding="22,0" CornerRadius="26" />
+    </Grid>
+</ContentPage>
