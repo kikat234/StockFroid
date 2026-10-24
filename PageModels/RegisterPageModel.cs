@@ -15,9 +15,9 @@ public partial class RegisterPageModel : ObservableObject
         ["Magasin de coopérative – Céréales"] = "Stockage sec et ventilé"
     };
 
-    private readonly SessionService _session;
+    private readonly AuthService _auth;
 
-    public RegisterPageModel(SessionService session) => _session = session;
+    public RegisterPageModel(AuthService auth) => _auth = auth;
 
     public List<string> ListeAffectations { get; } = Affectations.Keys.ToList();
 
@@ -47,12 +47,17 @@ public partial class RegisterPageModel : ObservableObject
     [ObservableProperty]
     private bool _aDesErreurs;
 
+    [ObservableProperty]
+    private bool _estOccupe;
+
     partial void OnAffectationChoisieChanged(string? value) =>
         TemperatureTexte = value is not null && Affectations.TryGetValue(value, out var t) ? t : "—";
 
     [RelayCommand]
     private async Task CreerCompteAsync()
     {
+        if (EstOccupe) return;
+
         Erreurs.Clear();
 
         if (string.IsNullOrWhiteSpace(NomComplet))
@@ -66,8 +71,8 @@ public partial class RegisterPageModel : ObservableObject
         if (AffectationChoisie is null)
             Erreurs.Add("Choisissez votre affectation.");
 
-        if (MotDePasse.Length < 8)
-            Erreurs.Add("Le mot de passe doit comporter au moins 8 caractères.");
+        if (MotDePasse.Length < AuthService.LongueurMinMotDePasse)
+            Erreurs.Add($"Le mot de passe doit comporter au moins {AuthService.LongueurMinMotDePasse} caractères.");
         else if (MotDePasse != Confirmation)
             Erreurs.Add("Les deux mots de passe ne correspondent pas.");
 
@@ -77,9 +82,25 @@ public partial class RegisterPageModel : ObservableObject
         ADesErreurs = Erreurs.Count > 0;
         if (ADesErreurs) return;
 
-        // Front-end uniquement : le compte n'est pas encore enregistré côté serveur.
-        _session.Connecter(NomComplet);
-        await Shell.Current.GoToAsync("//main/campagnes");
+        EstOccupe = true;
+        try
+        {
+            var resultat = await _auth.InscrireAsync(NomComplet, Matricule, AffectationChoisie!, MotDePasse);
+            if (!resultat.Succes)
+            {
+                Erreurs.Add(resultat.Message);
+                ADesErreurs = true;
+                return;
+            }
+
+            MotDePasse = string.Empty;
+            Confirmation = string.Empty;
+            await Shell.Current.GoToAsync("//main/campagnes");
+        }
+        finally
+        {
+            EstOccupe = false;
+        }
     }
 
     [RelayCommand]

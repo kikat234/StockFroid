@@ -3,27 +3,6 @@ using StockFroid.Models;
 
 namespace StockFroid.Services;
 
-public record RepartitionCause(CauseDePerte Cause, double Quantite, double Part);
-
-public record LotCritique(Lot Lot, double Perdu, double PartDuLot, CauseDePerte CausePrincipale);
-
-public class BilanCampagne
-{
-    public int NbLots { get; init; }
-    public int LotsActifs { get; init; }
-    public int NbConstats { get; init; }
-    public int NbPerimes { get; init; }
-    public int NbBientot { get; init; }
-    public double StockInitial { get; init; }
-    public double TotalPerdu { get; init; }
-
-    public double StockRestant => Math.Max(0, StockInitial - TotalPerdu);
-    public double TauxPerte => StockInitial <= 0 ? 0 : TotalPerdu / StockInitial;
-
-    public IReadOnlyList<RepartitionCause> Repartition { get; init; } = Array.Empty<RepartitionCause>();
-    public IReadOnlyList<LotCritique> LotsCritiques { get; init; } = Array.Empty<LotCritique>();
-}
-
 public class BilanService
 {
     private readonly StockFroidDatabase _database;
@@ -87,6 +66,13 @@ public class BilanService
             .Take(3)
             .ToList();
 
+        var detailLots = lots
+            .Select(l => new LotBilan(l, perdusParLot.GetValueOrDefault(l.Id),
+                PeremptionCalculator.Evaluer(l.DatePeremption, maintenant)))
+            .OrderBy(x => x.Lot.DatePeremption)
+            .ThenBy(x => x.Lot.Code)
+            .ToList();
+
         return new BilanCampagne
         {
             NbLots = lots.Count,
@@ -97,7 +83,8 @@ public class BilanService
             StockInitial = lots.Sum(l => l.QuantiteInitiale),
             TotalPerdu = totalPerdu,
             Repartition = repartition,
-            LotsCritiques = critiques
+            LotsCritiques = critiques,
+            Lots = detailLots
         };
     }
 }

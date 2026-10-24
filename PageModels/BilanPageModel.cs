@@ -11,19 +11,20 @@ namespace StockFroid.PageModels;
 
 public partial class BilanPageModel : ObservableObject
 {
-    /// <summary>Au-delà de ce taux de perte, la campagne est signalée comme critique.</summary>
-    private const double SeuilCritique = 0.10;
+    private const double SeuilCritique = BilanCampagne.SeuilTauxCritique;
 
     private readonly BilanService _bilans;
     private readonly CampagneSelector _selector;
     private readonly IAlertService _alertes;
+    private readonly ExportService _export;
     private int _campagneId;
 
-    public BilanPageModel(BilanService bilans, CampagneSelector selector, IAlertService alertes)
+    public BilanPageModel(BilanService bilans, CampagneSelector selector, IAlertService alertes, ExportService export)
     {
         _bilans = bilans;
         _selector = selector;
         _alertes = alertes;
+        _export = export;
     }
 
     public ObservableCollection<RepartitionItem> Repartition { get; } = new();
@@ -112,6 +113,56 @@ public partial class BilanPageModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task GenererRapportAsync() =>
-        _alertes.AfficherAsync("Rapport local", "L'export PDF/CSV sera ajouté dans une prochaine version.");
+    private async Task GenererRapportAsync()
+    {
+        if (EstOccupe || !ACampagne) return;
+
+        var choix = await _alertes.ChoisirAsync("Format du rapport", new[] { "PDF", "CSV (Excel)" });
+        if (choix is null) return;
+
+        var format = choix.StartsWith("PDF", StringComparison.Ordinal) ? FormatExport.Pdf : FormatExport.Csv;
+
+        EstOccupe = true;
+        try
+        {
+            var resultat = await _export.ExporterAsync(_campagneId, format);
+            if (!resultat.Succes || resultat.Valeur is null)
+            {
+                await _alertes.AfficherAsync("Export impossible", resultat.Message);
+                return;
+            }
+
+            // Windows : on laisse le choix entre enregistrer le fichier et le partager.
+            var action = "Partager";
+            if (ExportService.EnregistrementDisponible)
+            {
+                var choixAction = await _alertes.ChoisirAsync("Rapport prêt", new[] { "Enregistrer sous…", "Partager" });
+                if (choixAction is null) return;
+                action = choixAction;
+            }
+
+            if (action.StartsWith("Enregistrer", StringComparison.Ordinal))
+            {
+                var enregistre = await _export.EnregistrerSousAsync(resultat.Valeur);
+                if (!enregistre.Succes)
+                    await _alertes.AfficherAsync("Enregistrement impossible", enregistre.Message);
+                else if (enregistre.Valeur is not null)
+                    await _alertes.AfficherAsync("Rapport enregistré", enregistre.Valeur);
+                return;
+            }
+
+            var partage = await _export.PartagerAsync(resultat.Valeur, $"Bilan {CampagneNom}");
+            if (!partage.Succes)
+                await _alertes.AfficherAsync("Rapport créé", partage.Message);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await _alertes.AfficherAsync("Export impossible", "Le rapport n'a pas pu être généré.");
+        }
+        finally
+        {
+            EstOccupe = false;
+        }
+    }
 }

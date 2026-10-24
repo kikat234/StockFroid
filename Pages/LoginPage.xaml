@@ -30,7 +30,7 @@
                     <Label Text="Identifiant / Matricule agent" Style="{StaticResource Libelle}" />
                     <Border Style="{StaticResource Champ}">
                         <Entry Text="{Binding Identifiant}"
-                               Placeholder="ex. AGT-2026-88"
+                               Placeholder="ex. Mekounde12"
                                Style="{StaticResource EntryChamp}" />
                     </Border>
 

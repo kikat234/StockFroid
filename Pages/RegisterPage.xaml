@@ -14,13 +14,13 @@
 
             <Label Text="Nom et prénom de l'agent" Style="{StaticResource Libelle}" />
             <Border Style="{StaticResource Champ}">
-                <Entry Text="{Binding NomComplet}" Placeholder="Ex. KONE Ibrahim"
+                <Entry Text="{Binding NomComplet}" Placeholder="Ex. MEKOUNDE ELAME"
                        Style="{StaticResource EntryChamp}" />
             </Border>
 
             <Label Text="Matricule ou e-mail professionnel" Style="{StaticResource Libelle}" />
             <Border Style="{StaticResource Champ}">
-                <Entry Text="{Binding Matricule}" Placeholder="Ex. SF-774092"
+                <Entry Text="{Binding Matricule}" Placeholder="Ex. mekounde12"
                        Style="{StaticResource EntryChamp}" />
             </Border>
 

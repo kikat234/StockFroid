@@ -25,6 +25,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<LotService>();
         builder.Services.AddSingleton<PerteService>();
         builder.Services.AddSingleton<BilanService>();
+        builder.Services.AddSingleton<AuthService>();
+        builder.Services.AddSingleton<ExportService>();
         builder.Services.AddSingleton<CampagneSelector>();
 
         // MVVM : chaque page reçoit son PageModel par injection de dépendances

@@ -1,5 +1,3 @@
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
 using SQLite;
 using StockFroid.Models;
@@ -7,30 +5,38 @@ using StockFroid.Models;
 namespace StockFroid.Data;
 
 /// <summary>
-/// Fournit une connexion SQLite partagée et initialise les tables de l'application.
+/// Accès à la base SQLite locale (fonctionne hors connexion).
+/// La base est créée et initialisée une seule fois, au premier accès.
 /// </summary>
 public class StockFroidDatabase
 {
-    private readonly string _dbPath;
-    private SQLiteAsyncConnection? _connection;
+    private readonly Lazy<Task<SQLiteAsyncConnection>> _connexion;
 
     public StockFroidDatabase()
     {
-        _dbPath = Path.Combine(FileSystem.AppDataDirectory, "stockfroid.db3");
+        _connexion = new Lazy<Task<SQLiteAsyncConnection>>(InitialiserAsync);
     }
 
-    public async Task<SQLiteAsyncConnection> GetConnectionAsync()
+    public Task<SQLiteAsyncConnection> GetConnectionAsync() => _connexion.Value;
+
+    private static async Task<SQLiteAsyncConnection> InitialiserAsync()
     {
-        if (_connection is not null)
-            return _connection;
+        var chemin = Path.Combine(FileSystem.AppDataDirectory, "stockfroid.db3");
+        var db = new SQLiteAsyncConnection(chemin);
 
-        _connection = new SQLiteAsyncConnection(_dbPath);
+        await db.CreateTableAsync<Campagne>();
+        await db.CreateTableAsync<Lot>();
+        await db.CreateTableAsync<Perte>();
+        await db.CreateTableAsync<Agent>();
 
-        // Crée les tables si nécessaire
-        await _connection.CreateTableAsync<Campagne>();
-        await _connection.CreateTableAsync<Lot>();
-        await _connection.CreateTableAsync<Perte>();
+        // Jeu de données de démonstration (uniquement si la base est vide).
+        if (await db.Table<Campagne>().CountAsync() == 0)
+            await DemoData.InsererAsync(db);
 
-        return _connection;
+        // Compte de démonstration (uniquement si aucun compte n'existe encore).
+        if (await db.Table<Agent>().CountAsync() == 0)
+            await DemoData.InsererAgentAsync(db);
+
+        return db;
     }
 }

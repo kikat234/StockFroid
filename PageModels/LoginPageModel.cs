@@ -6,12 +6,12 @@ namespace StockFroid.PageModels;
 
 public partial class LoginPageModel : ObservableObject
 {
-    private readonly SessionService _session;
+    private readonly AuthService _auth;
     private readonly IAlertService _alertes;
 
-    public LoginPageModel(SessionService session, IAlertService alertes)
+    public LoginPageModel(AuthService auth, IAlertService alertes)
     {
-        _session = session;
+        _auth = auth;
         _alertes = alertes;
     }
 
@@ -36,20 +36,32 @@ public partial class LoginPageModel : ObservableObject
     [RelayCommand]
     private void BasculerMotDePasse() => MotDePasseMasque = !MotDePasseMasque;
 
+    [ObservableProperty]
+    private bool _estOccupe;
+
     [RelayCommand]
     private async Task SeConnecterAsync()
     {
-        // Front-end uniquement : l'authentification serveur n'est pas implémentée.
-        if (string.IsNullOrWhiteSpace(Identifiant) || string.IsNullOrWhiteSpace(MotDePasse))
-        {
-            Erreur = "Renseignez votre identifiant et votre mot de passe.";
-            return;
-        }
+        if (EstOccupe) return;
 
+        EstOccupe = true;
         Erreur = string.Empty;
-        _session.Connecter(Identifiant);
-        MotDePasse = string.Empty;
-        await Shell.Current.GoToAsync("//main/campagnes");
+        try
+        {
+            var resultat = await _auth.ConnecterAsync(Identifiant, MotDePasse);
+            if (!resultat.Succes)
+            {
+                Erreur = resultat.Message;
+                return;
+            }
+
+            MotDePasse = string.Empty;
+            await Shell.Current.GoToAsync("//main/campagnes");
+        }
+        finally
+        {
+            EstOccupe = false;
+        }
     }
 
     [RelayCommand]
